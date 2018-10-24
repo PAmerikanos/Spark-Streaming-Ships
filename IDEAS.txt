@@ -1,0 +1,5 @@
+In Port/fishing area
+Heatmap
+Day or night/time of crash
+weather during crash
+compare vessel speeds

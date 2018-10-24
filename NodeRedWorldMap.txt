@@ -1,0 +1,456 @@
+[
+    {
+        "id": "34184f23.89952",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "7aed705e.29aff",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "d0a10d67.a75ca",
+        "type": "inject",
+        "z": "34184f23.89952",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 240,
+        "wires": [
+            [
+                "6ea85b1.0d623a4"
+            ]
+        ]
+    },
+    {
+        "id": "6ea85b1.0d623a4",
+        "type": "http request",
+        "z": "34184f23.89952",
+        "name": "Madrid",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://informo.munimadrid.es/informo/tmadrid/pm.xml",
+        "tls": "",
+        "x": 250,
+        "y": 240,
+        "wires": [
+            [
+                "ba9cc30f.00ec7"
+            ]
+        ]
+    },
+    {
+        "id": "ba9cc30f.00ec7",
+        "type": "xml",
+        "z": "34184f23.89952",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 410,
+        "y": 240,
+        "wires": [
+            [
+                "19daeb2d.04b955"
+            ]
+        ]
+    },
+    {
+        "id": "19daeb2d.04b955",
+        "type": "function",
+        "z": "34184f23.89952",
+        "name": "Function",
+        "func": "for (var i=0;i<msg.payload.pms.pm.length;i++){\n    \n    if (msg.payload.pms.pm[i].codigo[0] === 'PM10001'){\n        var velocidad=msg.payload.pms.pm[i].velocidad[0];\n        var codigo=msg.payload.pms.pm[i].codigo[0];\n        msg.payload={};\n        msg.payload.velocidad=velocidad;\n        msg.payload.codigo=codigo;\n        msg.payload.timestamp=Date.now();\n        node.send(msg);\n        break;\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 560,
+        "y": 240,
+        "wires": [
+            [
+                "92f1e8b7.b151e8"
+            ]
+        ]
+    },
+    {
+        "id": "5185240e.4bb3ec",
+        "type": "debug",
+        "z": "34184f23.89952",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 870,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "92f1e8b7.b151e8",
+        "type": "csv",
+        "z": "34184f23.89952",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": false,
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "codigo,velocidad,timestamp",
+        "skip": "0",
+        "x": 710,
+        "y": 240,
+        "wires": [
+            [
+                "e2af8102.94fcd",
+                "5185240e.4bb3ec"
+            ]
+        ]
+    },
+    {
+        "id": "e2af8102.94fcd",
+        "type": "file",
+        "z": "34184f23.89952",
+        "name": "FileSave",
+        "filename": "home/gkousiou/lab/user1703/PM10001",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 860,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "dfe16c.f77ece98",
+        "type": "json",
+        "z": "34184f23.89952",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 180,
+        "wires": [
+            [
+                "d6c8f17e.6a5a8"
+            ]
+        ]
+    },
+    {
+        "id": "b6d3ca4c.e2d6e8",
+        "type": "inject",
+        "z": "34184f23.89952",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 180,
+        "wires": [
+            [
+                "b735cb0b.087288"
+            ]
+        ]
+    },
+    {
+        "id": "d6c8f17e.6a5a8",
+        "type": "function",
+        "z": "34184f23.89952",
+        "name": "Function",
+        "func": "for (var i=0; i<msg.payload.features.length; i++){\n    var lon=msg.payload.features[i].geometry.coordinates[0];\n    var lat=msg.payload.features[i].geometry.coordinates[1];\n//    msg.payload={};\n    msg.payload.name=i;\n    msg.payload.lon=lon;\n    msg.payload.lat=lat;\n    msg.payload.icon=\"ship\";\n    msg.payload.addtoheatmap=\"True\";\n    msg.payload.timestamp=Date.now();\n    node.send(msg);\n}\nreturn;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 560,
+        "y": 180,
+        "wires": [
+            [
+                "c40e2e68.82a92",
+                "29c8c425.86a7ec"
+            ]
+        ]
+    },
+    {
+        "id": "cd31bb1f.b5c8c8",
+        "type": "debug",
+        "z": "34184f23.89952",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 730,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "b735cb0b.087288",
+        "type": "http request",
+        "z": "34184f23.89952",
+        "name": "A'dam P",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://opd.it-t.nl/data/amsterdam/ParkingLocation.json",
+        "tls": "",
+        "x": 260,
+        "y": 180,
+        "wires": [
+            [
+                "dfe16c.f77ece98"
+            ]
+        ]
+    },
+    {
+        "id": "968a00f3.243f5",
+        "type": "xml",
+        "z": "34184f23.89952",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 410,
+        "y": 120,
+        "wires": [
+            [
+                "cd31bb1f.b5c8c8"
+            ]
+        ]
+    },
+    {
+        "id": "d19fd339.38639",
+        "type": "http request",
+        "z": "34184f23.89952",
+        "name": "Swiss P",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://www.pls-zh.ch/plsFeed/rss",
+        "tls": "",
+        "x": 260,
+        "y": 120,
+        "wires": [
+            [
+                "968a00f3.243f5"
+            ]
+        ]
+    },
+    {
+        "id": "ecf47422.cd72f8",
+        "type": "function",
+        "z": "34184f23.89952",
+        "name": "Function",
+        "func": "for (var i=0;i<msg.payload.rss.channel[0].item.length;i++){\n    var title=msg.payload.rss.channel[0].item[i].title[0];\n    var description=msg.payload.rss.channel[0].item[i].description[0];\n    //msg.payload={};\n    msg.payload.title=title;\n    msg.payload.description=description\n    //msg.payload.timestamp=Date.now();\n    node.send(msg);\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 560,
+        "y": 120,
+        "wires": [
+            [
+                "7b63485c.645ad8"
+            ]
+        ]
+    },
+    {
+        "id": "6aa19f57.58915",
+        "type": "inject",
+        "z": "34184f23.89952",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 120,
+        "wires": [
+            [
+                "d19fd339.38639"
+            ]
+        ]
+    },
+    {
+        "id": "c40e2e68.82a92",
+        "type": "debug",
+        "z": "34184f23.89952",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 730,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "2bd8a82f.72d318",
+        "type": "worldmap",
+        "z": "7aed705e.29aff",
+        "name": "wldmap",
+        "lat": "0",
+        "lon": "0",
+        "zoom": "",
+        "layer": "Esri Ocean",
+        "cluster": "",
+        "maxage": "200",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "true",
+        "x": 600,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "80fa766c.00a038",
+        "type": "http request",
+        "z": "7aed705e.29aff",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "",
+        "tls": "",
+        "x": 350,
+        "y": 140,
+        "wires": [
+            [
+                "2bd8a82f.72d318"
+            ]
+        ]
+    },
+    {
+        "id": "a54f68a7.2b6378",
+        "type": "inject",
+        "z": "7aed705e.29aff",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "80fa766c.00a038"
+            ]
+        ]
+    },
+    {
+        "id": "4de09363.2d40ec",
+        "type": "csv",
+        "z": "7aed705e.29aff",
+        "name": "",
+        "sep": "|",
+        "hdrin": "",
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "4,5",
+        "skip": "1",
+        "x": 390,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c35132d.026d5d",
+        "type": "file in",
+        "z": "7aed705e.29aff",
+        "name": "file",
+        "filename": "/media/paris/Temp/TEMP/hotels-small.CSV",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "77d3a5b4.ae813c"
+            ]
+        ]
+    },
+    {
+        "id": "88430708.776268",
+        "type": "inject",
+        "z": "7aed705e.29aff",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 220,
+        "wires": [
+            [
+                "c35132d.026d5d"
+            ]
+        ]
+    },
+    {
+        "id": "77d3a5b4.ae813c",
+        "type": "debug",
+        "z": "7aed705e.29aff",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 710,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "7b63485c.645ad8",
+        "type": "debug",
+        "z": "34184f23.89952",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 730,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "29c8c425.86a7ec",
+        "type": "worldmap",
+        "z": "34184f23.89952",
+        "name": "Worldmap",
+        "lat": "52.3702",
+        "lon": "4.8952",
+        "zoom": "10",
+        "layer": "Esri Ocean",
+        "cluster": "0",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "true",
+        "x": 730,
+        "y": 200,
+        "wires": []
+    }
+]
